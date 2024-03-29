@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Hadith Display</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        #hadithContainer {
+            background-color: white;
+            background-image: linear-gradient(to right, #f3dce2, #dcf3ed, #f3dce2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: max-content;
+            margin: 20px auto;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+	
+	#reference {
+    	    font-weight: bold;
+    	    display: block;
+    	    margin-top: 10px;
+	}
+
+    </style>
+
+<script>
+        let hadithData;
+
+        // Fetch the JSON file
+        fetch('https://raw.githubusercontent.com/salman0ansari/Random-Hadith-Generator/main/hadithAPI/bukhari.json')
+            .then(response => response.json())
+            .then(data => {
+                hadithData = data.hadith;
+		fetchRandomHadith();
+            });
+
+        function fetchRandomHadith() {
+            const randomIndex = Math.floor(Math.random() * hadithData.length);
+            const hadith = hadithData[randomIndex];
+            updateHadithContent(hadith);
+        }
+
+        function fetchHadithById() {
+            const id = parseInt(document.getElementById('hadithId').value);
+            const hadith = hadithData.find(item => item.id === id);
+            if (hadith) {
+                updateHadithContent(hadith);
+            } else {
+                alert('Hadith not found');
+            }
+        }
+
+        function updateHadithContent(hadith) {
+            document.getElementById('hadithText').innerText = `${hadith.hadith_english}`;
+            document.getElementById('reference').innerText = `Reference: ${hadith.refno}`;
+            document.getElementById('header').innerText = hadith.header.trim();
+            document.getElementById('hadithContainer').style.opacity = 1;
+        }
+	window.onload = fetchRandomHadith;
+    </script>
+
+<body class="bg-gradient-to-r from-blue-500 to-green-500 flex justify-center items-center h-screen">
+    <div id="hadithContainer">
+        <div class="hadith-content">
+            <div id="header"></div>
+            <div id="hadithText">Loading...</div>
+            <div id="reference"></div>
+            <button onclick="fetchRandomHadith()">Get Another Hadith</button>
+            <input type="number" id="hadithId" placeholder="Enter Hadith Number" class="border border-gray-300 rounded-md p-2 mx-2">
+            <button onclick="fetchHadithById()">Get Hadith by Number</button>
+        </div>
+    </div>
+</body>
+</html>
